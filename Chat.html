@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="header">
+        <h1>Messenger</h1>
+        <div class="header-buttons">
+            <button onclick="window.location.href='index.html'"><i class="fas fa-arrow-left"></i> Back</button>
+        </div>
+    </div>
+
+    <div class="body">
+        <div class="chat-container chat-page">
+            <div class="chat-area">
+                <div class="chat-header">
+                    <div class="chat-user-info">
+                        <div class="user-status-wrapper">
+                            <img src="pic2.png.jpg" alt="Current Chat" id="chat-user-image">
+                            <span class="online-status" id="user-online-status"></span>
+                        </div>
+                        <div class="user-details">
+                            <h3 id="chat-user-name">Prashanth</h3>
+                            <span class="status-text" id="status-text">Online</span>
+                        </div>
+                    </div>
+                    <div class="chat-actions">
+                        <button onclick="viewProfile()"><i class="fas fa-user"></i></button>
+                        <button><i class="fas fa-phone"></i></button>
+                        <button><i class="fas fa-video"></i></button>
+                        <button><i class="fas fa-ellipsis-v"></i></button>
+                    </div>
+                </div>
+                <div class="messages" id="messages-container">
+                    <!-- Messages will be dynamically added here -->
+                </div>
+                <div class="message-input">
+                    <button><i class="fas fa-plus"></i></button>
+                    <input type="text" id="message-input" placeholder="Type a message...">
+                    <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get chat details from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const userName = urlParams.get('user');
+        const userImage = urlParams.get('image');
+
+        // Update chat header with user details
+        if (userName) {
+            document.getElementById('chat-user-name').textContent = userName;
+        }
+        if (userImage) {
+            document.getElementById('chat-user-image').src = userImage;
+        }
+
+        // Mock chat history
+        const chatHistory = [
+            { type: 'received', message: 'Hello, how are you?', time: '12:30' },
+            { type: 'sent', message: "I'm doing great! Thanks for asking.", time: '12:31' }
+        ];
+
+        // Function to display chat history
+        function displayChatHistory() {
+            const messagesContainer = document.getElementById('messages-container');
+            messagesContainer.innerHTML = '';
+            
+            chatHistory.forEach(msg => {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${msg.type}`;
+                messageDiv.innerHTML = `
+                    <p>${msg.message}</p>
+                    <span class="time">${msg.time}</span>
+                `;
+                messagesContainer.appendChild(messageDiv);
+            });
+            
+            // Scroll to bottom
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Function to send message
+        function sendMessage() {
+            const input = document.getElementById('message-input');
+            const message = input.value.trim();
+            
+            if (message) {
+                const now = new Date();
+                const time = now.getHours() + ':' + now.getMinutes().toString().padStart(2, '0');
+                
+                chatHistory.push({
+                    type: 'sent',
+                    message: message,
+                    time: time
+                });
+                
+                displayChatHistory();
+                input.value = '';
+            }
+        }
+
+        // Function to view profile
+        function viewProfile() {
+            window.location.href = `profile.html?user=${encodeURIComponent(userName)}`;
+        }
+
+        // Initialize chat
+        displayChatHistory();
+
+        // Add enter key listener for sending messages
+        document.getElementById('message-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>
